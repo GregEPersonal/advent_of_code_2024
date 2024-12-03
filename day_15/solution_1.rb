@@ -1,1 +1,9 @@
-# Solution for Day 15 Part 1
+# Solution for Day 15
+
+require_relative '../utils'
+
+# Read input lines
+lines = read_input_lines("day_15/input.txt")
+
+# Solution logic
+
