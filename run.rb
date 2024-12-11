@@ -6,7 +6,7 @@ if day.nil? || part.nil?
   exit
 end
 
-day_dir = "day_#{day.to_s.rjust(2, '0')}"
+day_dir = "day_#{day.to_s.rjust(2, "0")}"
 solution_file = "#{day_dir}/solution_#{part}.rb"
 
 unless File.exist?(solution_file)
@@ -14,4 +14,8 @@ unless File.exist?(solution_file)
   exit
 end
 
+starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 load solution_file
+ending = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+elapsed = ending - starting
+puts "Elapsed time: #{elapsed} seconds"
