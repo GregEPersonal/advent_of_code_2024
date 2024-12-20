@@ -4,7 +4,7 @@ require_relative "../utils"
 require "pry"
 
 # Read input lines
-lines = read_input_lines("day_20/test_input.txt")
+lines = read_input_lines("day_20/input.txt")
 
 # Solution logic
 
@@ -176,6 +176,19 @@ puts "Final Path length: #{final_path.length}"
 
 print_map(map)
 
+def add_shortcut(x, y, final_path_hash, index, shortcuts, x_distance, y_distance, map, width, height)
+  return -1 if x < 0 || x >= width || y < 0 || y >= height
+  return -1 if map[y][x] == "#"
+
+  # We'll check the point
+  point = [x, y]
+  if final_path_hash.key?(point)
+    shortcut_length = (final_path_hash[point] - index) - (x_distance + y_distance)
+    shortcuts << shortcut_length and return shortcut_length if shortcut_length > 0
+  end
+  return -1
+end
+
 # OKay, so we want to measure the shortcuts.
 # We can now move within walls for up to 20 seconds. Big difference.
 # So, I guess one way to think about it is to, for each point in the map
@@ -190,120 +203,154 @@ final_path_hash = {}
 final_path.each_with_index do |point, index|
   final_path_hash[point] = index
 end
-
+last_72_count = 0
 # Check for shortcuts
 final_path.each_with_index do |point, index|
+  if index % 100 == 0
+    puts "Index: #{index}"
+  end
+
   starting_x = point[0]
   starting_y = point[1]
+  debug_shortcuts = []
 
+  #New plan. We are going to find every point that's within a 20 space radius of the current point.
+  # For each, we check if it's in the final_path_hash. If it is, we calculate the shortcut length.
+  # We then store the shortcut length in an potential_shortcuts array Or maybe just hte acutal shortcuts array.
+  (0..20).each do |x_distance|
+    y_amount = 20 - x_distance
+    (0..y_amount).each do |y_distance|
+      next if x_distance == 0 && y_distance == 0
+
+      pp = add_shortcut(starting_x + x_distance, starting_y + y_distance, final_path_hash, index, shortcuts, x_distance, y_distance, map, width, height)
+      pn = add_shortcut(starting_x + x_distance, starting_y - y_distance, final_path_hash, index, shortcuts, x_distance, y_distance, map, width, height) if y_distance > 0
+      np = add_shortcut(starting_x - x_distance, starting_y + y_distance, final_path_hash, index, shortcuts, x_distance, y_distance, map, width, height) if x_distance > 0
+      nn = add_shortcut(starting_x - x_distance, starting_y - y_distance, final_path_hash, index, shortcuts, x_distance, y_distance, map, width, height) if x_distance > 0 && y_distance > 0
+      debug_shortcuts += [x: starting_x + x_distance, y: starting_y + y_distance, cost: pp] if pp > 0
+      debug_shortcuts += [x: starting_x + x_distance, y: starting_y - y_distance, cost: pn] if pn && pn > 0
+      debug_shortcuts += [x: starting_x - x_distance, y: starting_y + y_distance, cost: np] if np && np > 0
+      debug_shortcuts += [x: starting_x - x_distance, y: starting_y - y_distance, cost: nn] if nn && nn > 0
+    end
+  end
+
+  # count_72 = debug_shortcuts.count { |shortcut| shortcut[:cost] == 72 }
+  # new_count_72 = count_72 - last_72_count
+  # puts "Point #{starting_x}, #{starting_y} 72 count: #{new_count_72}" if new_count_72 > 0
+  # # binding.pry
+  # last_72_count = count_72
+
+  # print_shortcuts_debug(map, starting_x, starting_y, debug_shortcuts)
+  # binding.pry
+
+  # OLD & INCORRECT
   # Next, for each wall, we check the cardinal directions.
   # If it's a dot, we save the point to later calculate the shortcut length.
   # If it's a wall, we keep moving along it, up to 20 times, provided we haven't been to that wall before.
   # For each space, we check if we've already checked it. If we have, we stop.
 
-  possible_shortcuts = []
-  open_set = []
-  # Do the first one manually because it has different rules.
-  closed_set = { [starting_x, starting_y] => 0 }
+  # possible_shortcuts = []
+  # open_set = []
+  # # Do the first one manually because it has different rules.
+  # closed_set = { [starting_x, starting_y] => 0 }
 
-  point_left = { x: starting_x - 1, y: starting_y, cost: 1 }
-  point_right = { x: starting_x + 1, y: starting_y, cost: 1 }
-  point_up = { x: starting_x, y: starting_y - 1, cost: 1 }
-  point_down = { x: starting_x, y: starting_y + 1, cost: 1 }
+  # point_left = { x: starting_x - 1, y: starting_y, cost: 1 }
+  # point_right = { x: starting_x + 1, y: starting_y, cost: 1 }
+  # point_up = { x: starting_x, y: starting_y - 1, cost: 1 }
+  # point_down = { x: starting_x, y: starting_y + 1, cost: 1 }
 
-  open_set << point_left if map[starting_y][starting_x - 1] == "#"
-  open_set << point_right if map[starting_y][starting_x + 1] == "#"
-  open_set << point_up if map[starting_y - 1][starting_x] == "#"
-  open_set << point_down if map[starting_y + 1][starting_x] == "#"
+  # open_set << point_left if map[starting_y][starting_x - 1] == "#"
+  # open_set << point_right if map[starting_y][starting_x + 1] == "#"
+  # open_set << point_up if map[starting_y - 1][starting_x] == "#"
+  # open_set << point_down if map[starting_y + 1][starting_x] == "#"
 
-  while open_set.length > 0
-    current_point = open_set.min_by { |point| point[:cost] }
+  # while open_set.length > 0
+  #   current_point = open_set.min_by { |point| point[:cost] }
 
-    # We'll check if this is beyond 20 spaces
-    if current_point[:cost] > 19
-      break
-    end
+  #   # We'll check if this is beyond 20 spaces
+  #   if current_point[:cost] > 19
+  #     break
+  #   end
 
-    # We'll remove the current point from the open set
-    open_set.delete(current_point)
+  #   # We'll remove the current point from the open set
+  #   open_set.delete(current_point)
 
-    # We'll add the current point to the closed set
-    closed_set[[current_point[:x], current_point[:y]]] = current_point[:cost]
+  #   # We'll add the current point to the closed set
+  #   closed_set[[current_point[:x], current_point[:y]]] = current_point[:cost]
 
-    # We'll check the options for moving in each direction
-    previous_point = current_point
+  #   # We'll check the options for moving in each direction
+  #   previous_point = current_point
 
-    # Current X and Y
-    x = previous_point[:x]
-    y = previous_point[:y]
+  #   # Current X and Y
+  #   x = previous_point[:x]
+  #   y = previous_point[:y]
 
-    # Calculate the adjacent points
-    point_left = { x: x - 1, y: y, cost: previous_point[:cost] + 1 }
-    point_right = { x: x + 1, y: y, cost: previous_point[:cost] + 1 }
-    point_up = { x: x, y: y - 1, cost: previous_point[:cost] + 1 }
-    point_down = { x: x, y: y + 1, cost: previous_point[:cost] + 1 }
+  #   # Calculate the adjacent points
+  #   point_left = { x: x - 1, y: y, cost: previous_point[:cost] + 1 }
+  #   point_right = { x: x + 1, y: y, cost: previous_point[:cost] + 1 }
+  #   point_up = { x: x, y: y - 1, cost: previous_point[:cost] + 1 }
+  #   point_down = { x: x, y: y + 1, cost: previous_point[:cost] + 1 }
 
-    # Handle point left
-    if valid_shortcut_point?(point_left, previous_point, map, closed_set, open_set)
-      point_type = map[point_left[:y]][point_left[:x]]
-      open_set << point_left if point_type == "#"
-      if point_type == "." # && !locations_seen.include?([point_left[:x], point_left[:y]])
-        possible_shortcuts << point_left
-        closed_set[[point_left[:x], point_left[:y]]] = point_left[:cost]
-      end
-    end
+  #   # Handle point left
+  #   if valid_shortcut_point?(point_left, previous_point, map, closed_set, open_set)
+  #     point_type = map[point_left[:y]][point_left[:x]]
+  #     open_set << point_left if point_type == "#"
+  #     if point_type == "." # && !locations_seen.include?([point_left[:x], point_left[:y]])
+  #       possible_shortcuts << point_left
+  #       closed_set[[point_left[:x], point_left[:y]]] = point_left[:cost]
+  #     end
+  #   end
 
-    # Handle point right
-    if valid_shortcut_point?(point_right, previous_point, map, closed_set, open_set)
-      point_type = map[point_right[:y]][point_right[:x]]
-      open_set << point_right if point_type == "#"
-      if point_type == "." # && !locations_seen.include?([point_left[:x], point_left[:y]])
-        possible_shortcuts << point_right
-        closed_set[[point_right[:x], point_right[:y]]] = point_right[:cost]
-      end
-    end
+  #   # Handle point right
+  #   if valid_shortcut_point?(point_right, previous_point, map, closed_set, open_set)
+  #     point_type = map[point_right[:y]][point_right[:x]]
+  #     open_set << point_right if point_type == "#"
+  #     if point_type == "." # && !locations_seen.include?([point_left[:x], point_left[:y]])
+  #       possible_shortcuts << point_right
+  #       closed_set[[point_right[:x], point_right[:y]]] = point_right[:cost]
+  #     end
+  #   end
 
-    # Handle point up
-    if valid_shortcut_point?(point_up, previous_point, map, closed_set, open_set)
-      point_type = map[point_up[:y]][point_up[:x]]
-      open_set << point_up if point_type == "#"
-      if point_type == "." # && !locations_seen.include?([point_left[:x], point_left[:y]])
-        possible_shortcuts << point_up
-        closed_set[[point_up[:x], point_up[:y]]] = point_up[:cost]
-      end
-    end
+  #   # Handle point up
+  #   if valid_shortcut_point?(point_up, previous_point, map, closed_set, open_set)
+  #     point_type = map[point_up[:y]][point_up[:x]]
+  #     open_set << point_up if point_type == "#"
+  #     if point_type == "." # && !locations_seen.include?([point_left[:x], point_left[:y]])
+  #       possible_shortcuts << point_up
+  #       closed_set[[point_up[:x], point_up[:y]]] = point_up[:cost]
+  #     end
+  #   end
 
-    # Handle point down
-    if valid_shortcut_point?(point_down, previous_point, map, closed_set, open_set)
-      point_type = map[point_down[:y]][point_down[:x]]
-      open_set << point_down if point_type == "#"
-      if point_type == "." # && !locations_seen.include?([point_left[:x], point_left[:y]])
-        possible_shortcuts << point_down
-        closed_set[[point_down[:x], point_down[:y]]] = point_down[:cost]
-      end
-    end
-  end
+  #   # Handle point down
+  #   if valid_shortcut_point?(point_down, previous_point, map, closed_set, open_set)
+  #     point_type = map[point_down[:y]][point_down[:x]]
+  #     open_set << point_down if point_type == "#"
+  #     if point_type == "." # && !locations_seen.include?([point_left[:x], point_left[:y]])
+  #       possible_shortcuts << point_down
+  #       closed_set[[point_down[:x], point_down[:y]]] = point_down[:cost]
+  #     end
+  #   end
+  # end
 
   # binding.pry
   # print_shortcuts_debug(map, starting_x, starting_y, possible_shortcuts)
 
   # Then, we figure out the actual shortcuts.
   # For each possible shortcut, we calculate how big a shortcut it is.
-  shortcut_debug = possible_shortcuts.map(&:clone)
-  possible_shortcuts.each do |shortcut|
-    shortcut_index = final_path_hash[[shortcut[:x], shortcut[:y]]]
-    shortcut_length = (shortcut_index - index) - shortcut[:cost]
-    shortcuts << shortcut_length if shortcut_length > 0
+  # shortcut_debug = possible_shortcuts.map(&:clone)
+  # possible_shortcuts.each do |shortcut|
+  #   shortcut_index = final_path_hash[[shortcut[:x], shortcut[:y]]]
+  #   shortcut_length = (shortcut_index - index) - shortcut[:cost]
+  #   shortcuts << shortcut_length if shortcut_length > 0
 
-    #Debug
-    shortcut_debug[shortcut_debug.index(shortcut)][:cost] = shortcut_length
-  end
+  #   #Debug
+  #   shortcut_debug[shortcut_debug.index(shortcut)][:cost] = shortcut_length
+  # end
   # print_shortcuts_debug(map, starting_x, starting_y, shortcut_debug)
   # binding.pry
 end
 
-binding.pry
+# binding.pry
 
-goal_shortcut_length = 50
+goal_shortcut_length = 100
 puts "Shortcuts over #{goal_shortcut_length}: #{shortcuts.count { |shortcut| shortcut >= goal_shortcut_length }}"
-puts shortcuts.select { |s| s > goal_shortcut_length }.group_by { |s| s }.transform_values { |v| v.count }.sort_by { |k, v| k }.to_h
+# puts shortcuts.select { |s| s >= goal_shortcut_length }.group_by { |s| s }.transform_values { |v| v.count }.sort_by { |k, v| k }.to_h
