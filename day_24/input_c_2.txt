@@ -1,12 +1,12 @@
 x00: 1
-x01: 0
+x01: 1
 x02: 1
 x03: 1
-x04: 0
-x05: 0
+x04: 1
+x05: 1
 x06: 1
 x07: 1
-x08: 0
+x08: 1
 x09: 1
 x10: 1
 x11: 1
@@ -15,77 +15,77 @@ x13: 1
 x14: 1
 x15: 1
 x16: 1
-x17: 0
-x18: 0
-x19: 0
-x20: 0
-x21: 0
-x22: 0
-x23: 0
-x24: 0
+x17: 1
+x18: 1
+x19: 1
+x20: 1
+x21: 1
+x22: 1
+x23: 1
+x24: 1
 x25: 1
 x26: 1
 x27: 1
 x28: 1
-x29: 0
+x29: 1
 x30: 1
 x31: 1
-x32: 0
-x33: 0
+x32: 1
+x33: 1
 x34: 1
-x35: 0
+x35: 1
 x36: 1
 x37: 1
-x38: 0
-x39: 0
+x38: 1
+x39: 1
 x40: 1
 x41: 1
-x42: 0
-x43: 0
+x42: 1
+x43: 1
 x44: 1
 y00: 1
-y01: 0
-y02: 0
+y01: 1
+y02: 1
 y03: 1
 y04: 1
-y05: 0
-y06: 0
-y07: 0
-y08: 0
-y09: 0
-y10: 0
+y05: 1
+y06: 1
+y07: 1
+y08: 1
+y09: 1
+y10: 1
 y11: 1
-y12: 0
-y13: 0
+y12: 1
+y13: 1
 y14: 1
-y15: 0
+y15: 1
 y16: 1
 y17: 1
 y18: 1
 y19: 1
 y20: 1
-y21: 0
-y22: 0
+y21: 1
+y22: 1
 y23: 1
-y24: 0
-y25: 0
-y26: 0
+y24: 1
+y25: 1
+y26: 1
 y27: 1
 y28: 1
 y29: 1
-y30: 0
+y30: 1
 y31: 1
-y32: 0
+y32: 1
 y33: 1
 y34: 1
-y35: 0
-y36: 0
-y37: 0
+y35: 1
+y36: 1
+y37: 1
 y38: 1
 y39: 1
 y40: 1
 y41: 1
-y42: 0
+y42: 1
 y43: 1
 y44: 1
 
@@ -109,7 +109,7 @@ pnt OR nwb -> bnk
 pdk AND fpp -> fnn
 x18 XOR y18 -> fcm
 y05 AND x05 -> mkq
-y15 AND x15 -> mht
+y15 AND x15 -> jgt
 cnq AND kbw -> tdh
 dvg OR vvt -> hfj
 msr AND rfj -> qnh
@@ -142,9 +142,9 @@ grs XOR whw -> z39
 x08 AND y08 -> hrv
 y06 AND x06 -> wgp
 vwb XOR dgc -> z26
-tsw XOR wwm -> hdt
+tsw XOR wwm -> z05
 tqf XOR grc -> z25
-x09 AND y09 -> z09
+x09 AND y09 -> gbf
 y25 AND x25 -> dmw
 x23 XOR y23 -> tqk
 x11 XOR y11 -> jrm
@@ -178,7 +178,7 @@ whw AND grs -> rtb
 fcg OR qvd -> drc
 vsk AND djp -> wkn
 y37 AND x37 -> hbg
-vkd XOR wqr -> gbf
+vkd XOR wqr -> z09
 gmj XOR swf -> z24
 y41 XOR x41 -> gfs
 sdb XOR cds -> z38
@@ -198,7 +198,7 @@ x32 AND y32 -> qtc
 hdt AND gwg -> ncj
 nqw OR tdh -> bfg
 y03 XOR x03 -> fhp
-y15 XOR x15 -> jgt
+y15 XOR x15 -> mht
 x43 AND y43 -> ndc
 fmw AND mqr -> pqm
 fnn OR cpd -> tfh
@@ -239,7 +239,7 @@ vsk XOR djp -> z27
 x28 XOR y28 -> kbc
 rtb OR fvv -> fkp
 y01 XOR x01 -> jjj
-rnk OR mkq -> z05
+rnk OR mkq -> hdt
 cjc XOR ggp -> z08
 y39 XOR x39 -> whw
 fkp AND dqk -> dvg
